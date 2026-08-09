@@ -23,18 +23,18 @@ automatically.
 ## Architecture
 
 ```
-┌─────────────┐      ┌──────────────┐      ┌──────────────────┐
-│   Producer   │─────▶│  Kafka Topic │◀─────│  Consumer Group   │
-│ (CLI, ad-hoc)│      │ demo-topic   │      │  demo-consumer     │
-└─────────────┘      │ (3 partitions)│      │  (1–5 replicas)    │
-                      └──────────────┘      └──────────────────┘
+┌─────────────┐          ┌─---──────────┐        ┌──────────────────┐
+│   Producer   │─────▶  |  Kafka Topic │◀─────  │   Consumer Group │
+│ (CLI, ad-hoc)│         │ demo-topic   │        │  demo-consumer   │
+└─────────────┘          │ (3 partitions)│       │  (1–5 replicas)  │
+                         └──────────────┘        └──────────────────┘
                              ▲                        ▲
-                             │ lag metric              │ scales
+                             │ lag metric             │ scales
                              │                        │
-                      ┌──────────────────────────────────┐
+                      ┌───────────────────────── ─────────┐
                       │      KEDA ScaledObject            │
                       │  (kafka scaler, lagThreshold=5)   │
-                      └──────────────────────────────────┘
+                      └────────────────────── ────────────┘
 ```
 
 - **Kafka**: single-broker cluster (KRaft mode, no Zookeeper) via the Strimzi operator
