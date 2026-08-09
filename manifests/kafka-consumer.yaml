@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-consumer
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-consumer
+  template:
+    metadata:
+      labels:
+        app: demo-consumer
+    spec:
+      containers:
+        - name: demo-consumer
+          image: quay.io/strimzi/kafka:1.1.0-kafka-4.3.0
+          command:
+            - /bin/bash
+            - -c
+            - |
+              while true; do
+                bin/kafka-console-consumer.sh \
+                  --bootstrap-server my-cluster-kafka-bootstrap:9092 \
+                  --topic demo-topic \
+                  --group demo-consumer-group \
+                  --max-messages 1
+                sleep 3
+              done

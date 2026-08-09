@@ -1,0 +1,21 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: demo-consumer-scaledobject
+  namespace: kafka
+spec:
+  scaleTargetRef:
+    name: demo-consumer
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+    - type: kafka
+      metadata:
+        # Fully-qualified DNS name required: KEDA's operator runs in the
+        # `keda` namespace, so a short name won't resolve. See
+        # docs/TROUBLESHOOTING.md for details.
+        bootstrapServers: my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+        consumerGroup: demo-consumer-group
+        topic: demo-topic
+        lagThreshold: "5"
+        offsetResetPolicy: earliest
