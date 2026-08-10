@@ -1,0 +1,18 @@
+# Go binaries
+app/consumer
+app/*.exe
+
+# Environment files
+.env
+.env.*
+
+# IDE / editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+
+# Coverage
+coverage.out
+coverage.html

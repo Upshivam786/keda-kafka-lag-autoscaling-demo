@@ -13,18 +13,52 @@ spec:
       labels:
         app: demo-consumer
     spec:
+      terminationGracePeriodSeconds: 30
+
       containers:
         - name: demo-consumer
-          image: quay.io/strimzi/kafka:1.1.0-kafka-4.3.0
-          command:
-            - /bin/bash
-            - -c
-            - |
-              while true; do
-                bin/kafka-console-consumer.sh \
-                  --bootstrap-server my-cluster-kafka-bootstrap:9092 \
-                  --topic demo-topic \
-                  --group demo-consumer-group \
-                  --max-messages 1
-                sleep 3
-              done
+          image: keda-kafka-consumer:dev
+          imagePullPolicy: IfNotPresent
+
+          env:
+            - name: KAFKA_BROKERS
+              value: my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+            - name: KAFKA_TOPIC
+              value: demo-topic
+            - name: KAFKA_CONSUMER_GROUP
+              value: demo-consumer-group
+            - name: PROCESSING_DELAY_MS
+              value: "3000"
+            - name: HTTP_PORT
+              value: "8080"
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
