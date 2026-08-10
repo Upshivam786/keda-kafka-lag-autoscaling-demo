@@ -8,7 +8,7 @@ This repo runs entirely on your laptop using [Kind](https://kind.sigs.k8s.io/)
 (Kubernetes-in-Docker), [Strimzi](https://strimzi.io/) (Kafka on Kubernetes), and
 KEDA. No cloud account required.
 
-## What this demonstrates
+## What this project demonstrates 
 
 - A Kafka topic with a consumer group falling behind (lag building up)
 - A KEDA `ScaledObject` watching that lag via the built-in [Kafka scaler](https://keda.sh/docs/latest/scalers/apache-kafka/)
